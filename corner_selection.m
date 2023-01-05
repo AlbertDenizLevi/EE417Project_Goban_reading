@@ -1,3 +1,63 @@
+% This code processes a series of images of a Go board, or "goban," and
+% identifies the locations of the black and white stones on the board. It
+% also displays the identified stone locations on the original image. The
+% code consists of a main loop that processes each image in a directory,
+% and several functions that perform different tasks within the loop.
+% 
+% The main loop begins by calling the dir function to get a list of all the
+% files in the current directory with a .png file extension. It then loops
+% through the list of files, and for each file, it does the following:
+% 
+% Loads the image using the imread function. 
+% Displays the image using the imshow function. 
+% Adds a button to the figure using the uicontrol
+% function, which allows the user to use previously saved "ginput" points,
+% which are points clicked on the image by the user. Tries to load
+% previously saved ginput points from a file using the load function. If
+% the ginput points were successfully loaded, the figure with the button is
+% closed. If the ginput points could not be loaded, the code prompts the
+% user to click on the four corner points of the goban in the image using
+% the ginput function. The clicked points are then saved to a file. Calls
+% the improve_corner_points function to improve the accuracy of the corner
+% points. This function takes as input the image and the corner points, and
+% returns improved corner points as output. Calls the compute_grid_points
+% function to compute the grid points of the goban. This function takes as
+% input the improved corner points, and returns the grid points as output.
+% Calls the compute_brightness function to compute the brightness values at
+% the grid points. This function takes as input the image and the grid
+% points, and returns the brightness values as output. Calls the
+% display_results function to display the results. This function takes as
+% input the image, the original and improved corner points, the grid
+% points, and the brightness values, and displays the results by plotting
+% the points on the image. The improve_corner_points function improves the
+% accuracy of the corner points by defining a window around each corner
+% point and searching for the point within the window with the highest
+% gradient magnitude. It returns the improved corner points as output.
+% 
+% The compute_grid_points function computes the grid points of the goban by
+% creating an ideal grid and transforming it to match the improved corner
+% points using the fitgeotrans and transformPointsForward functions. It
+% returns the grid points as output.
+% 
+% The compute_brightness function computes the brightness values at the
+% grid points by interpolating the image values at the grid points using
+% the interp2 function. It returns the brightness values as output.
+% 
+% The display_results function displays the results by plotting the
+% original and improved corner points, the grid points, and the black and
+% white stone points on the image. It also saves the gamestate, or the
+% state of the goban with the black and white stone points, to a .mat file.
+% 
+% The use_saved_ginputs function is a callback function for the button in
+% the main loop. It loads the saved ginput points from a file and closes
+% the figure with the button.
+% 
+% The display_fake_goban function displays a fake goban with filled circles
+% as the stones to show the saved gamestate. It takes the gamestate as
+% input and displays
+
+
+
 
 % Close all figures, clear the command window, and clear all variables
 close all;
@@ -44,44 +104,8 @@ for i = 1:length(files)
     % Display the results
     display_results(image, x, y, x_improved, y_improved, x_grid, y_grid, brightness, files);
     
-%     % Load the gamestate from the .mat file
-%     load(['gamestate_' files(i).name(1:end-4) '.mat'], 'gamestate');
-%     
-%     % Display the fake goban
-%     display_fake_goban(gamestate);
-
 end
 
-% function display_fake_goban(gamestate)
-%     % Set the stone colors
-%     black_color = [0 0 0];
-%     white_color = [1 1 1];
-%     empty_color = [0.5 0.5 0.5];
-% 
-%     % Initialize the image
-%     image = zeros(19*20, 19*20, 3);
-%     
-%     % Loop through the grid points
-%     for i = 1:19
-%         for j = 1:19
-%             % Determine the color of the current grid point
-%             if gamestate(i, j) == 2
-%                 color = black_color;
-%             elseif gamestate(i, j) == 1
-%                 color = white_color;
-%             else
-%                 color = empty_color;
-%             end
-% 
-%             % Fill the current grid point with the appropriate color
-%             color_image = repmat(color, [20 20]);
-%             image((i-1)*20+1:i*20, (j-1)*20+1:j*20, :) = color_image;
-%         end
-%     end
-% 
-%     % Display the image
-%     imshow(image)
-% end
 
 
 
